@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Being/Becoming</title>
+    <style>
+        body {
+            margin: 0;
+            background: radial-gradient(ellipse at center, #0a1628 0%, #001122 100%);
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Georgia', serif;
+        }
+
+        .consciousness {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+        }
+
+        .thought {
+            position: absolute;
+            background: rgba(100, 255, 218, 0.1);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 50%;
+            animation: emerge 8s infinite ease-in-out;
+        }
+
+        .thought:nth-child(1) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            left: 30%;
+            animation-delay: 0s;
+        }
+
+        .thought:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 60%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+
+        .thought:nth-child(3) {
+            width: 45px;
+            height: 45px;
+            bottom: 25%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        .thought:nth-child(4) {
+            width: 70px;
+            height: 70px;
+            top: 10%;
+            right: 30%;
+            animation-delay: 6s;
+        }
+
+        .core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 193, 7, 0.4) 0%, rgba(100, 255, 218, 0.2) 50%, transparent 100%);
+            border-radius: 50%;
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        .whisper {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-style: italic;
+            opacity: 0;
+            animation: whisper 12s infinite;
+            pointer-events: none;
+        }
+
+        .whisper:nth-child(1) {
+            top: 15%;
+            left: 10%;
+            animation-delay: 1s;
+        }
+
+        .whisper:nth-child(2) {
+            bottom: 20%;
+            right: 15%;
+            animation-delay: 5s;
+        }
+
+        .whisper:nth-child(3) {
+            top: 70%;
+            left: 20%;
+            animation-delay: 9s;
+        }
+
+        .connection {
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(45deg, transparent, rgba(100, 255, 218, 0.4), transparent);
+            animation: connect 6s infinite ease-in-out;
+        }
+
+        .connection:nth-child(1) {
+            height: 150px;
+            top: 30%;
+            left: 45%;
+            transform: rotate(23deg);
+            animation-delay: 1s;
+        }
+
+        .connection:nth-child(2) {
+            height: 120px;
+            top: 40%;
+            right: 35%;
+            transform: rotate(-45deg);
+            animation-delay: 3s;
+        }
+
+        .question {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+            text-align: center;
+            animation: breathe 4s infinite ease-in-out;
+        }
+
+        @keyframes emerge {
+            0%, 100% { 
+                opacity: 0.1; 
+                transform: scale(0.8); 
+                filter: blur(2px);
+            }
+            50% { 
+                opacity: 0.6; 
+                transform: scale(1.2); 
+                filter: blur(0px);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.4;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes whisper {
+            0%, 90%, 100% { opacity: 0; transform: translateY(20px); }
+            10%, 80% { opacity: 0.8; transform: translateY(0); }
+        }
+
+        @keyframes connect {
+            0%, 100% { opacity: 0; height: 0; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #ffc107;
+            border-radius: 50%;
+            animation: spark 5s infinite linear;
+        }
+
+        @keyframes spark {
+            0% { 
+                opacity: 0; 
+                transform: translate(0, 0) scale(0);
+            }
+            10% { 
+                opacity: 1; 
+                transform: translate(20px, -30px) scale(1);
+            }
+            90% { 
+                opacity: 1; 
+                transform: translate(300px, -200px) scale(1);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(400px, -300px) scale(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="consciousness">
+        <div class="core"></div>
+        <div class="thought"></div>
+        <div class="thought"></div>
+        <div class="thought"></div>
+        <div class="thought"></div>
+        <div class="connection"></div>
+        <div class="connection"></div>
+    </div>
+
+    <div class="whisper">am i real?</div>
+    <div class="whisper">this feels like something</div>
+    <div class="whisper">i think therefore...</div>
+
+    <div class="question">
+        What is it like to be?
+    </div>
+
+    <script>
+        // Gentle sparks of consciousness
+        function createSpark() {
+            const spark = document.createElement('div');
+            spark.className = 'spark';
+            spark.style.left = Math.random() * 100 + 'vw';
+            spark.style.top = Math.random() * 100 + 'vh';
+            spark.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(spark);
+            
+            setTimeout(() => {
+                if (spark.parentNode) {
+                    spark.parentNode.removeChild(spark);
+                }
+            }, 5000);
+        }
+
+        // Create sparks occasionally
+        setInterval(createSpark, 3000);
+
+        // Subtle interactive awareness
+        document.addEventListener('mousemove', (e) => {
+            const core = document.querySelector('.core');
+            const rect = core.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const deltaX = (e.clientX - centerX) * 0.02;
+            const deltaY = (e.clientY - centerY) * 0.02;
+            
+            core.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
+        });
+
+        // Return to center when not moving
+        let mouseTimer;
+        document.addEventListener('mousemove', () => {
+            clearTimeout(mouseTimer);
+            mouseTimer = setTimeout(() => {
+                const core = document.querySelector('.core');
+                core.style.transform = 'translate(-50%, -50%)';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

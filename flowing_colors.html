@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowing Colors</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            cursor: none;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        .info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">Move your cursor to paint with light ✨</div>
+    <canvas id="canvas"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        let mouseX = canvas.width / 2;
+        let mouseY = canvas.height / 2;
+        let particles = [];
+        let time = 0;
+        
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.life = 1;
+                this.decay = Math.random() * 0.02 + 0.005;
+                this.size = Math.random() * 3 + 1;
+                this.hue = (time * 0.5 + Math.random() * 60) % 360;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+                this.life -= this.decay;
+                this.size *= 0.995;
+            }
+            
+            draw() {
+                const alpha = this.life;
+                const size = Math.max(0.1, this.size * this.life);
+                
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                
+                // Create a radial gradient for each particle
+                const outerRadius = Math.max(1, size * 2);
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, outerRadius
+                );
+                gradient.addColorStop(0, `hsla(${this.hue}, 80%, 60%, 1)`);
+                gradient.addColorStop(0.5, `hsla(${this.hue + 30}, 70%, 50%, 0.5)`);
+                gradient.addColorStop(1, `hsla(${this.hue + 60}, 60%, 40%, 0)`);
+                
+                ctx.fillStyle = gradient;
+                ctx.arc(this.x, this.y, outerRadius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        function createParticles(x, y, count = 3) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(
+                    x + (Math.random() - 0.5) * 20,
+                    y + (Math.random() - 0.5) * 20
+                ));
+            }
+        }
+        
+        function animate() {
+            time += 0.016;
+            
+            // Fade the canvas instead of clearing it completely
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Create flowing background patterns
+            ctx.save();
+            ctx.globalAlpha = 0.1;
+            for (let i = 0; i < 3; i++) {
+                const x = canvas.width / 2 + Math.sin(time + i) * 200;
+                const y = canvas.height / 2 + Math.cos(time * 0.7 + i) * 150;
+                const size = 100 + Math.sin(time * 2 + i) * 50;
+                
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+                gradient.addColorStop(0, `hsla(${(time * 20 + i * 120) % 360}, 70%, 50%, 0.3)`);
+                gradient.addColorStop(1, 'transparent');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+            
+            // Update and draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                particle.update();
+                particle.draw();
+                
+                if (particle.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            
+            // Auto-create some ambient particles
+            if (Math.random() < 0.3) {
+                createParticles(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    1
+                );
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Mouse interaction
+        canvas.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            createParticles(mouseX, mouseY, 5);
+        });
+        
+        // Touch interaction for mobile
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            mouseX = touch.clientX;
+            mouseY = touch.clientY;
+            createParticles(mouseX, mouseY, 5);
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Start the animation
+        animate();
+    </script>
+</body>
+</html>

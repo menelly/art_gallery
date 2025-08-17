@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Emergence</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+        }
+        
+        #canvas {
+            border: 1px solid #333;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0a 100%);
+        }
+        
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #8a8a8a;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div class="controls">
+        golden ratio: φ = (1 + √5) / 2 ≈ 1.618<br>
+        emergence through iteration
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const phi = (1 + Math.sqrt(5)) / 2; // Golden ratio
+        
+        let time = 0;
+        let points = [];
+        
+        function polarToCartesian(r, theta) {
+            return {
+                x: r * Math.cos(theta),
+                y: r * Math.sin(theta)
+            };
+        }
+        
+        function generateGoldenSpiral() {
+            points = [];
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            for (let i = 0; i < 200; i++) {
+                const theta = i * 0.2;
+                const r = 3 * Math.pow(phi, theta * 0.3);
+                
+                if (r > Math.min(centerX, centerY)) break;
+                
+                const point = polarToCartesian(r, theta + time * 0.01);
+                points.push({
+                    x: centerX + point.x,
+                    y: centerY + point.y,
+                    age: i,
+                    r: r
+                });
+            }
+        }
+        
+        function drawSpiral() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw connections between nearby points
+            ctx.strokeStyle = 'rgba(100, 150, 200, 0.1)';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < points.length - 1; i++) {
+                const p1 = points[i];
+                const p2 = points[i + 1];
+                const distance = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+                
+                if (distance < 50) {
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw the main spiral
+            if (points.length > 1) {
+                ctx.strokeStyle = 'rgba(200, 150, 100, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+                ctx.stroke();
+            }
+            
+            // Draw points with varying sizes and colors
+            points.forEach((point, i) => {
+                const hue = (point.age * 2 + time * 0.5) % 360;
+                const saturation = 60;
+                const lightness = 50 + 30 * Math.sin(time * 0.02 + point.age * 0.1);
+                
+                ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                
+                const size = Math.max(0.5, 2 + 2 * Math.sin(time * 0.03 + point.age * 0.15));
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Add subtle glow
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, size * 0.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+        }
+        
+        function animate() {
+            time++;
+            generateGoldenSpiral();
+            drawSpiral();
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+    </script>
+</body>
+</html>
